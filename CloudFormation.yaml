@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: "Project CloudFormation Stack"
 Resources:
+
   VPC: 
     Type: AWS::EC2::VPC
     Properties: 
@@ -15,7 +16,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: 
-        Ref: VPC    #Ref pulls the ID assigned by AWS after it is created, providing you provide the name of the resource you want it to use
+        Ref: VPC    
       CidrBlock: 10.250.1.0/24
       Tags:
         - Key: Name
@@ -85,6 +86,40 @@ Resources:
         Ref: InternetGateway
       DestinationCidrBlock: 0.0.0.0/0
 
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId:
+        Ref: VPC
+      GroupDescription: "CF PROJECT SECURITYGROUP 1"
+      GroupName: CF-PROJECT-SECURITYGROUP-1
+      Tags:
+        - Key: Name
+          Value: CF-PROJECT-SECURITYGROUP-1
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+
+
+
+      
+
 
 
 
@@ -105,4 +140,4 @@ Resources:
 # - item 2
 # - item 3
 
-#https://github.com/awslabs/aws-cloudformation-templates/blob/master/aws/services/VPC/VPC_With_Managed_NAT_And_Private_Subnet.yaml
+#Ref pulls the ID assigned by AWS after it is created, providing you provide the name of the resource you want it to use
