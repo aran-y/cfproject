@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Project CloudFormation Stack"
+Resources:
+  VPC: 
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: 10.250.0.0/16
+      Tags: 
+        - Key: Name 
+          Value: CF-PROJECT-VPC-1
+        - Key: Owner
+          Value: Aran
+
+  Subnet1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: 
+        Ref: VPC    #Ref pulls the ID assigned by AWS after it is created, providing you provide the name of the resource you want it to use
+      CidrBlock: 10.250.1.0/24
+      Tags:
+        - Key: Name
+          Value: CF-PROJECT-SUBNET-1-A
+      AvailabilityZone: ap-southeast-2a
+      MapPublicIpOnLaunch: true
+
+  Subnet1B:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: 
+        Ref: VPC
+      CidrBlock: 10.250.2.0/24
+      Tags:
+        - Key: Name
+          Value: CF-PROJECT-SUBNET-1-B
+      AvailabilityZone: ap-southeast-2b
+      MapPublicIpOnLaunch: true
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+        - Key: Name
+          Value: CF-PROJECT-ROUTETABLE-1
+
+  Subet1ARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: RouteTable
+      SubnetId:
+        Ref: Subnet1A
+
+  Subet1BRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: RouteTable
+      SubnetId:
+        Ref: Subnet1B
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: CF-PROJECT-IGATEWAY-1
+
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+  RouteAssociation:
+    Type: AWS::EC2::Route
+    DependsOn: AttachInternetGateway
+    Properties:
+      RouteTableId:
+        Ref: RouteTable
+      GatewayId:
+        Ref: InternetGateway
+      DestinationCidrBlock: 0.0.0.0/0
+
+
+
+
+
+
+#--Data inputs--
+
+#string: adsdfgas (a string of any characters)
+#integer(or int): 1 (just a number)
+#bool: true/false
+
+
+
+#--List Format--
+
+#my_list:     (can be any name for list)
+# - item 1
+# - item 2
+# - item 3
+
+#https://github.com/awslabs/aws-cloudformation-templates/blob/master/aws/services/VPC/VPC_With_Managed_NAT_And_Private_Subnet.yaml
